@@ -2,13 +2,15 @@
 
 Persistence Mapping is a tool for tracking the evolution of solar prominences. When a pixel reaches a maximum value, that value "persists" into subsequent frames until it is exceeded, resulting in a final image which traces out the full motion of the prominence.
 
+![Original images (left), persistence (middle), time convolution (right) with times indicated.](example.png)
+
 ## Files
 
 `persistence.py`
 Generates a persistence map, in the form of a movie and the final image. Map will be in the colormap associated with the data.
 
 `persistence_color.py`
-Generates a persistence map, but where each pixel is colored according to the time it reaches its maximum value.
+Generates a persistence map, but where each pixel is colored according to the time it reaches its maximum value. This method is called Time Convolution Mapping and is described by [Mays et al. (2015)](https://ui.adsabs.harvard.edu/abs/2015ApJ...812..145M/abstract).
 
 ## Required Selections
 
