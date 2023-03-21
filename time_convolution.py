@@ -1,5 +1,10 @@
+
+import warnings
+warnings.simplefilter('ignore', Warning)
+
 import os
 import numpy as np
+from tqdm import tqdm
 from astropy.io import fits
 import sunpy.visualization.colormaps as cm
 import matplotlib.pyplot as plt
@@ -20,18 +25,14 @@ y1 = 4096
 # enter minimum and maximum values for scaling here
 # enter None to choose the minimum or maximum value in the array
 MN = 0
-MX = 60
+MX = 5
 # choose colormap
 cmap_name = 'viridis'
 ###############################################################################
 
-def bytscl(arr, mn=None, mx=None):
+def bytscl(arr, mn, mx):
     # Scales values between mn<x<mx to 0.0<x<1.0
     scarr = np.zeros(arr.shape)
-    if mn==None:
-        mn = np.min(arr)
-    if mx==None:
-        mx = np.max(arr)
     zz = (arr < mn)
     aa = (arr > mx)
     scarr[zz] = 0.0
@@ -55,7 +56,8 @@ with fits.open(folder + filenames[0]) as f:
 smap1 = npmap[y0:y1, x0:x1]
 # normalize
 smap1 = smap1/exptime
-smap1 = bytscl(smap1, mn=MN, mx=MX)
+smap1 = np.log(smap1)
+smap1 = bytscl(smap1, MN, MX)
 
 # initialize array in which to store persistence data
 plist = np.zeros((len(filenames), y1-y0, x1-x0, 4), dtype='uint8')
@@ -65,9 +67,7 @@ plist[0] = np.array([[idx*carr[0] for idx in row] for row in smap1])
 plist[0,:,:,3] = 255
 
 # iterate through files
-for i, filename in enumerate(filenames[1:]):
-    if i % 10 == 0:
-        print(f'Progress: {i}/{len(filenames)} images')
+for i, filename in enumerate(tqdm(filenames[1:])):
     smap0 = smap1
     # open file as numpy array
     with fits.open(folder + filename) as f:
@@ -77,7 +77,8 @@ for i, filename in enumerate(filenames[1:]):
     smap1 = npmap[y0:y1, x0:x1]
     # normalize
     smap1 = smap1/exptime
-    smap1 = bytscl(smap1, mn=MN, mx=MX)
+    smap1 = np.log(smap1)
+    smap1 = bytscl(smap1, MN, MX)
     # perform persistence mapping operation
     gmap = (smap1 > smap0)
     smap1[~gmap] = smap0[~gmap]
@@ -91,3 +92,4 @@ for i, filename in enumerate(filenames[1:]):
 # save final image and full movie
 imageio.imwrite(f'{date}_{wv}_color_{cmap_name}.png', plist[-1])
 imageio.mimwrite(f'{date}_{wv}_color_{cmap_name}.mp4', plist, fps=12)
+

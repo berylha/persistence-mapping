@@ -9,7 +9,7 @@ Persistence Mapping is a tool for tracking the evolution of solar prominences. W
 `persistence.py`
 Generates a persistence map, in the form of a movie and the final image. Map will be in the colormap associated with the data.
 
-`persistence_color.py`
+`time_convolution.py`
 Generates a persistence map, but where each pixel is colored according to the time it reaches its maximum value. This method is called Time Convolution Mapping and is described by [Mays et al. (2015)](https://ui.adsabs.harvard.edu/abs/2015ApJ...812..145M/abstract).
 
 ## Required Selections
@@ -26,5 +26,5 @@ The following selections will need to be set manually, by editing the top sectio
 ### Required for only `persistence.py`:
 - telescope & instrument: this will enable correct selection of colormap
 
-### Required for only `persistence_color.py`:
+### Required for only `time_convolution.py`:
 - colormap: recommended perceptually uniform colormaps include `viridis`, `plasma`, and`magma`. `jet` is a commonly used rainbow map.
